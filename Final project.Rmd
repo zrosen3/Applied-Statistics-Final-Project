@@ -1,0 +1,113 @@
+---
+title: "Math 240 Final Project"
+author: "Zev Rosen"
+date: "11/6/2019"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(HH)
+library(leaps)
+library(car)
+happiness <- read_csv("Happiness.csv")
+names(happiness)
+summaryHH(happiness)
+names(happiness)
+names(happiness)[1] <- "Country"
+names(happiness)[4] <- "SDLadder"
+names(happiness)[5] <- "Positive"
+names(happiness)[6] <- "Negative"
+names(happiness)[7] <- "Socialsupport"
+names(happiness)[11] <- "Loggdppercapita"
+names(happiness)[12] <- "Healthylifeexpectancy"
+```
+
+```{r}
+fit <- lm(Score ~ Positive + Negative + Socialsupport + Freedom + Corruption + Generosity + Loggdppercapita + Healthylifeexpectancy, data = happiness)
+fitsel = regsubsets(Score ~ Positive + Negative + Socialsupport + Freedom + Corruption + Generosity + Loggdppercapita + Healthylifeexpectancy, data = happiness, nbest = 2)
+cbind(summary(fitsel)$which, summary(fitsel)$adjr2)
+plot(fitsel, scale = "adjr2")
+plot(fitsel, scale = "Cp")
+plot(fitsel, scale = "bic")
+summaryHH(fitsel)
+fitsel2 = lm(Score ~ Positive + Negative + Socialsupport + Freedom + Corruption + Loggdppercapita + Healthylifeexpectancy, data = happiness)
+vif(fitsel2)
+fitsel3 <- lm(Score ~ Positive + Negative + Socialsupport + Freedom + Corruption + Loggdppercapita +
+    Healthylifeexpectancy, data = happiness)
+pairs(~Score + Positive + Negative + Socialsupport + Freedom + Corruption + Loggdppercapita +
+    Healthylifeexpectancy, data = happiness)
+plot(fitsel3$fitted.values, fitsel3$residuals, ylab = "residuals",
+  xlab = "fitted y", main = "Residuals ")
+
+
+
+
+
+
+
+
+fitsel3 <- lm(Score ~ Positive + Negative + Socialsupport + Freedom + Corruption  +
+    Healthylifeexpectancy, data = happiness)
+di = rstandard(fitsel3) # standardized residuals
+ri = rstudent(fitsel3) # studentized residuals```
+plot(fitsel3$fitted.values, ri, main="Studentized residuals versus fitted values")
+abline(0,0)
+qqnorm(ri)
+qqline(ri)
+selri = which(abs(ri) >= 3)
+selri
+happiness[c(133,148),]
+fitsel3[selri]
+outlierTest(fitsel3)
+```
+```{r}
+fitsel3 <- lm(Score ~ Positive + Negative + Socialsupport + Freedom + Corruption  +
+    Healthylifeexpectancy, data = happiness)
+boxplot(happiness$Score, main = "Boxplot of Happiness Score", cex.main = 0.8, ylab = "happiness score")
+hist(happiness$Score, xlab = "happiness", main = "Histogram of happiness score", cex.main = 0.8)
+summary(happiness$Score)
+IQR(happiness$Score, na.rm = T)
+sd(happiness$Score, na.rm = T)
+
+boxplot(happiness$Positive, main = "Boxplot of Positive Affect", cex.main = 0.8, ylab = "Positive Affect")
+hist(happiness$Positive, xlab = "positive affect", main = "Histogram of Positive Affect", cex.main = 0.8)
+IQR(happiness$Positive, na.rm = T)
+sd(happiness$Positive, na.rm = T)
+summary(happiness$Positive)
+
+boxplot(happiness$Negative, main = "Boxplot of Negative Affect", cex.main = 0.8, ylab = "Negative Affect")
+hist(happiness$Negative, xlab = "negative affect", main = "Histogram of Negative Affect", cex.main = 0.8)
+IQR(happiness$Negative, na.rm = T)
+sd(happiness$Negative, na.rm = T)
+summary(happiness$Negative)
+
+boxplot(happiness$Socialsupport, main = "Boxplot of Social Support", cex.main = 0.8, ylab = "social support")
+hist(happiness$Socialsupport, xlab = "social support", main = "Histogram of social support", cex.main = 0.8)
+IQR(happiness$Socialsupport, na.rm = T)
+sd(happiness$Socialsupport, na.rm = T)
+summary(happiness$Socialsupport)
+
+boxplot(happiness$Freedom, main = "Boxplot of Freedom", cex.main = 0.8, ylab = "freedom")
+hist(happiness$Freedom, xlab = "freedom", main = "Histogram of freedom", cex.main = 0.8)
+IQR(happiness$Freedom, na.rm = T)
+sd(happiness$Freedom, na.rm = T)
+summary(happiness$Freedom)
+
+boxplot(happiness$Corruption, main = "Boxplot of Corruption", cex.main = 0.8, ylab = "corruption")
+hist(happiness$Corruption, xlab = "corruption", main = "Histogram of corruption", cex.main = 0.8)
+IQR(happiness$Corruption, na.rm = T)
+sd(happiness$Corruption, na.rm = T)
+summary(happiness$Corruption)
+
+boxplot(happiness$Healthylifeexpectancy, main = "Boxplot of Healthy Life Expectancy", cex.main = 0.8, ylab = "corruption")
+hist(happiness$Healthylifeexpectancy, xlab = "healthy life expectancy", main = "Histogram of healthy life expectancy", cex.main = 0.8)
+IQR(happiness$Healthylifeexpectancy, na.rm = T)
+sd(happiness$Healthylifeexpectancy, na.rm = T)
+summary(happiness$Healthylifeexpectancy)
+
+
+
+
+```
+
